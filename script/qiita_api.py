@@ -15,8 +15,8 @@ class QiitaApi:
     HEADERS = {'content-type': 'application/json'}
 
     def __init__(self):
-        CLIENT_ID = os.environ(["qiita_client_id"])
-        CLIENT_SECRET = os.environ(["qiita_client_secret"])
+        CLIENT_ID = os.environ.get("qiita_client_id")
+        CLIENT_SECRET = os.environ.get("qiita_client_secret")
         self.payload_template = {"client_id":CLIENT_ID,"client_secret":CLIENT_SECRET}
 
     @staticmethod
@@ -54,11 +54,11 @@ class QiitaApi:
         item = requests.get(get_item_url, headers=self.auth_header)
         return item
 
-    def adjust_item(self, items, pick_up_keys=[]:
+    def adjust_item(self, items, pick_up_keys=[]):
         pick_up_keys.extend(["id"])
         items_dict = {}
         for item in items.json():
-            pick_up_dict = {key: item[key] if key in item else pass for key in pick_up_keys}
+            pick_up_dict = {key: item[key] for key in pick_up_keys if key in item}
             item_dict.update({item["id"]: pick_up_dict})
         return items_dict
 

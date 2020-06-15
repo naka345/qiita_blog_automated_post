@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 import json
+from script.qiita_api import QiitaApi
 app = Flask(__name__)
 
 @app.route("/", methods=['GET'])
 def hello():
+    api = QiitaApi()
     return "Hello World!"
 
 @app.route('/reply', methods=['POST'])
@@ -18,4 +20,4 @@ def reply():
     return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5000,ssl_context=('/Users/naka345/server.crt', '/Users/naka345/server.key'), threaded=True, debug=True)
+    app.run()
