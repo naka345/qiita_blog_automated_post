@@ -7,6 +7,7 @@ services:
       args:
         - project_dir=/app
         - FLASK_APP=app.py
+        - domain=localhost
     ports:
       - "5000:5000"
     volumes:
@@ -14,4 +15,4 @@ services:
     tty: true
     environment:
       TZ: Asia/Tokyo
-    command: flask run --host 0.0.0.0 --port 5000
+    command: uwsgi --ini uwsgi.ini  
