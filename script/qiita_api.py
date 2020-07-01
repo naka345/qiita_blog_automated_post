@@ -6,13 +6,13 @@ import os
 
 state = "aa17785d811bb1913ef54b0a7657de780defaa2a"
 
-
-redirect_url = r"https://yahoo.co.jp"
-test = "https://www.yahoo.co.jp/"
+redirect_url = r"https://127.0.0.1:5000/"
+test = "https://127.0.0.1:5000/"
 
 class QiitaApi:
     BASE_API_URL = "https://qiita.com/api/v2/"
     HEADERS = {'content-type': 'application/json'}
+    CODE = ""
 
     def __init__(self):
         CLIENT_ID = os.environ.get("qiita_client_id")
@@ -23,15 +23,17 @@ class QiitaApi:
     def define_scope(scope_array):
         return " ".join(scope_array)
 
-    def authorization(self, scope=[]):
+    def call_authorization_url(self, scope=[]):
         auth_api = "oauth/authorize"
         authorization_base_url = f"{self.BASE_API_URL}{auth_api}"
+        client_id = self.payload_template["client_id"]
         oauth = OAuth2Session(client_id, redirect_uri=redirect_url, scope=scope)
         authorization_url, state = oauth.authorization_url(authorization_base_url)
-        authorization_response = input('Enter the full callback URL>> ')
+        #authorization_response = input('Enter the full callback URL>> ')
+        return authorization_url, state
 
-        url = authorization_response
-        code = urllib.parse.parse_qsl(url)[0][1]
+    def response_authorization_url(self, response_url):
+        code = urllib.parse.parse_qsl(response_url)[0][1]
         return code
 
     def access_tokens(self, code):
@@ -41,6 +43,8 @@ class QiitaApi:
 
         post_request = requests.post(token_url, data=json.dumps(
             access_payload), headers=self.HEADERS)
+        print(f"post_request: {post_request}")
+        pass
         token = post_request.json()["token"]
         self.bearer_token = {'Authorization': f'Bearer {token}'}
         self.create_auth_header()
@@ -59,7 +63,7 @@ class QiitaApi:
         items_dict = {}
         for item in items.json():
             pick_up_dict = {key: item[key] for key in pick_up_keys if key in item}
-            item_dict.update({item["id"]: pick_up_dict})
+            items_dict.update({item["id"]: pick_up_dict})
         return items_dict
 
     def post_item(self):
@@ -82,7 +86,8 @@ class QiitaApi:
 if __name__ == '__main__':
     api = QiitaApi()
     scope = ["read_qiita", "write_qiita"]
-    code = api.authorization(scope=QiitaApi.define_scope(scope))
+    url = api.call_authorization_url(scope=QiitaApi.define_scope(scope))
+    code = api.response_authorization_url(url)
     api.access_tokens(code)
     items = api.get_item()
     pick_up_keys = ["title","url","body","private"]
