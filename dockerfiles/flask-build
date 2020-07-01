@@ -2,14 +2,20 @@ FROM python:3.8-alpine3.11
 
 ARG project_dir=/app
 ARG FLASK_APP=app.py
+ARG domain=""
 ENV FLASK_APP=$FLASK_APP
 
 WORKDIR $project_dir
 COPY require/flask-requirements.txt $project_dir
+#ADD ./localhost+2-key.pem /etc/certs/localhost+2-key.pem
+#ADD ./localhost+2.pem /etc/certs/localhost+2.pem
 
 RUN apk update && \
   apk add --virtual .server --no-cache openssl && \
   pip install --upgrade pip setuptools wheel && \
-  pip install -r flask-requirements.txt
+  pip install -r flask-requirements.txt && \
+  openssl req -x509 -newkey rsa:4096 -sha256 \
+  -nodes -keyout server.key -out server.crt \
+  -subj "/CN=$domain" -days 825
 
 COPY ./script/app.py /app
