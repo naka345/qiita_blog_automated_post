@@ -1,0 +1,15 @@
+FROM python:3.8-alpine3.11
+
+ARG project_dir=/app
+ARG FLASK_APP=app.py
+ENV FLASK_APP=$FLASK_APP
+
+WORKDIR $project_dir
+COPY require/flask-requirements.txt $project_dir
+
+RUN apk update && \
+  apk add --virtual .server --no-cache openssl && \
+  pip install --upgrade pip setuptools wheel && \
+  pip install -r flask-requirements.txt
+
+COPY ./script/app.py /app
