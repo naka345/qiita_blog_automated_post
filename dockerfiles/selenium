@@ -1,0 +1,6 @@
+FROM python:3.8-alpine3.11
+
+RUN apk update && \
+  apk add --virtual .build --no-cache chromium && \
+  pip install --upgrade pip setuptools wheel && \
+  pip install --no-cache-dir selenium chromedriver-binary==83.*
