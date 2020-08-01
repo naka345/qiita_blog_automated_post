@@ -25,6 +25,10 @@ class QiitaAutoLogin(object):
         google_login = LinkGoogleAccountsLogin()
         google_login.auto_login(base_url)
 
+    def quit_driver(self):
+        # ブラウザを終了する
+        self.driver.quit()
+
 class LinkGoogleAccountsLogin(QiitaAutoLogin):
     EMAIL = os.environ.get("google_email")
     PASSWORD = os.environ.get("google_password")
@@ -85,9 +89,5 @@ class PassQiitaOAuth2(QiitaAutoLogin):
         print(self.driver.current_url)
         print(self.driver.title)
 
-# ブラウザを終了する
-driver.quit()
-
-redirect_url=r"https://127.0.0.1:5000/"
-res = requests.get(driver.current_url)
-res.read()
+if __name__ == "__main__":
+    qal = QiitaAutoLogin()
