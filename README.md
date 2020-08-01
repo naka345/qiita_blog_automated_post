@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # qiita_blog_automated_post
 qiita記事をgitで管理して自動で投稿したい
 
